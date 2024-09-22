@@ -142,15 +142,29 @@ const SaveIconContainer = styled.div`
 
 export default function Home() {
   const [servers, setServers] = useState([
-    { id: 1, title: "Server 1", yamlContent: "" },
+    {
+      id: 1, title: "Server 1", yamlContent:
+        `services:
+    mc:
+      image: iteg/minecraft-server
+      tty: true
+      stdin_open: true
+      ports:
+        -"25565:25565"
+      environment:
+        EULA: "TRUE"
+      volumes:
+        #attach the relative directory 'data' to the container's /data path
+        -./data:/data`
+    },
     { id: 2, title: "Server 2", yamlContent: "" },
     { id: 3, title: "Server 3", yamlContent: "" },
     { id: 4, title: "Server 4", yamlContent: "" },
   ]);
-  
+
   // Sélectionne par défaut le premier serveur
   const [selectedServerId, setSelectedServerId] = useState<number | null>(servers[0]?.id || null);
-  
+
   const [isEditable, setIsEditable] = useState(false);
   const [inputWidth, setInputWidth] = useState(0);
   const [tempTitle, setTempTitle] = useState("");
