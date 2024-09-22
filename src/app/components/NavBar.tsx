@@ -6,6 +6,8 @@ const StyledNavBar = styled.header`
   background-color: ${colors['background raised']};
   padding: 10px;
   height: 5rem;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledTitle = styled.h1`
