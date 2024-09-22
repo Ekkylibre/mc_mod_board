@@ -6,8 +6,8 @@ import { colors } from "./theme";
 import ServerButton from "./components/ServerButton";
 import AddServerButton from "./components/AddServerButton";
 import SettingButton from "./components/SettingButton";
-import { FaEdit, FaStop, FaPlay } from "react-icons/fa";
-import { Editor } from "@monaco-editor/react"; // Correction ici
+import { FaEdit, FaStop, FaPlay, FaSave } from "react-icons/fa";
+import { Editor } from "@monaco-editor/react";
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
@@ -73,8 +73,8 @@ const ContentContainer = styled.div`
 
 const IconContainer = styled.div`
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  height: 100%;
   cursor: pointer;
 `;
 
@@ -118,17 +118,26 @@ const HiddenSpan = styled.span`
   padding: 5px;
 `;
 
-const StyledInput = styled.input<{ isEditable: boolean }>`
+const StyledInput = styled.input<{ $isEditable: boolean }>`
   background-color: transparent;
   color: white;
   padding: 5px;
   font-size: 1.2rem;
-  border: ${({ isEditable }) => (isEditable ? "1px solid white" : "none")};
+  border: ${({ $isEditable }) => ($isEditable ? "1px solid white" : "none")};
   outline: none;
   width: auto;
   &:focus {
     border: 1px solid white;
   }
+`;
+
+const SaveIconContainer = styled.div`
+  background-color: ${colors["background raised"]};
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default function Home() {
@@ -155,6 +164,10 @@ export default function Home() {
 
   const handleEditorChange = (value: string | undefined) => {
     setYamlContent(value || "");
+  };
+
+  const handleSaveClick = () => {
+    console.log("Sauvegarde effectuée :", title, yamlContent);
   };
 
   return (
@@ -192,7 +205,7 @@ export default function Home() {
                 value={title}
                 onChange={handleInputChange}
                 disabled={!isEditable}
-                isEditable={isEditable}
+                $isEditable={isEditable}
                 style={{ width: `${inputWidth + 10}px` }}
               />
             </div>
@@ -212,7 +225,11 @@ export default function Home() {
               minimap: { enabled: false },
             }}
           />
-          <div>SaveButton</div>
+          <IconContainer onClick={handleSaveClick}>
+            <SaveIconContainer>
+              <FaSave />
+            </SaveIconContainer>
+          </IconContainer>
         </StyledMainContent>
         <StyledArticle>article</StyledArticle>
       </FlexContainer>
