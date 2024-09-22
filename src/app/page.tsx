@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { colors } from "./theme";
 import ServerButton from "./components/ServerButton";
 import AddServerButton from "./components/AddServerButton";
+import SettingButton from "./components/SettingButton";
 
 const StyledAside = styled.aside`
   background-color: ${colors['background raised']};
@@ -53,7 +54,9 @@ const FlexContainer = styled.div`
 
 const BottomText = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 10px;
 `;
 
 export default function Home() {
@@ -71,7 +74,7 @@ export default function Home() {
             </ButtonContainer>
             <BottomText>
               <AddServerButton />
-              
+              <SettingButton />
             </BottomText>
           </Container>
         </StyledAside>
