@@ -11,7 +11,7 @@ const StyledButton = styled.button<StyledButtonProps>`
   border: 2px solid ${colors['button border']};
   border-radius: 10px;
   width: auto;
-  height: 60px;
+  height: auto;
   font-size: 16px;
   cursor: pointer;
   padding: 10px;

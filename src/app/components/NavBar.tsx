@@ -5,7 +5,7 @@ import { colors } from '../theme';
 const StyledNavBar = styled.header`
   background-color: ${colors['background raised']};
   padding: 10px;
-  height: 5rem;
+  height: 4rem;
   display: flex;
   align-items: center;
 `;

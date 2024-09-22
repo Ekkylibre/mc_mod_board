@@ -13,8 +13,21 @@ const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
   padding: 10px;
   height: 100%;
-  width: 5rem;
+  width: 4rem;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; // Positionnez-le en haut
+    left: 50%; // Centrez le trait
+    width: 50%; // Ajustez la largeur du trait
+    height: 1px; // Hauteur du trait
+    background-color: ${colors["darker text"]}; // Couleur du trait
+    transform: translateX(-50%); // Centrez le trait horizontalement
+  }
 `;
+
 
 const Container = styled.div`
   display: flex;
@@ -80,7 +93,6 @@ const IconContainer = styled.div`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  border: 1px solid white;
   border-radius: 10px;
   overflow: hidden;
   height: 40px;
@@ -106,7 +118,7 @@ const StyledButton = styled.button`
     top: 15%;
     width: 1px;
     height: 70%;
-    background-color: white;
+    background-color: ${colors["darker text"]};
   }
 `;
 
@@ -138,7 +150,9 @@ const SaveIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem; /* Ajuste la taille ici */
 `;
+
 
 export default function Home() {
   const [servers, setServers] = useState([
@@ -282,7 +296,7 @@ export default function Home() {
             </IconContainer>
           </ContentContainer>
           <Editor
-            height="500px"
+            height="700px"
             language="yaml"
             value={yamlContent}
             theme="vs-dark"
