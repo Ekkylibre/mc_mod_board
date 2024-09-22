@@ -307,8 +307,8 @@ export default function Home() {
               minimap: { enabled: false },
             }}
           />
-          <IconContainer onClick={handleSaveClick}>
-            <SaveIconContainer>
+          <IconContainer>
+            <SaveIconContainer onClick={handleSaveClick}>
               <FaSave />
             </SaveIconContainer>
           </IconContainer>
