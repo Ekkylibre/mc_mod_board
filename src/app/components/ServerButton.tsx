@@ -6,11 +6,11 @@ const StyledButton = styled.button`
   color: white;
   border: 2px solid ${colors['button border']};
   border-radius: 10px;
-  width: auto; /* Définit la largeur */
-  height: 50px; /* Définit la hauteur pour le rendre carré */
+  width: auto;
+  height: 60px;
   font-size: 16px;
   cursor: pointer;
-  padding: 10px; /* Ajoute du padding à l'intérieur */
+  padding: 10px;
 `;
 
 export default function ServerButton() {
