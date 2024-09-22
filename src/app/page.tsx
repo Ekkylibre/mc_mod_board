@@ -2,11 +2,18 @@
 import NavBar from "./components/NavBar";
 import styled from 'styled-components';
 import { colors } from "./theme";
+import ServerButton from "./components/ServerButton";
 
 const StyledAside = styled.aside`
   background-color: ${colors['background raised']};
-  padding: 20px;
+  padding: 10px;
   height: 100%;
+  width: 5rem;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledMainContent = styled.div`
@@ -14,13 +21,14 @@ const StyledMainContent = styled.div`
   padding: 10px;
   color: white;
   height: 100%;
-  width: 100%;
+  width: auto;
+  flex: 1;
 `;
 
 const StyledArticle = styled.article`
   background-color: yellowgreen;
-  flex: 1;
-  padding: 20px;
+  flex: 0.25;
+  width: 250px;
 `;
 
 const AppContainer = styled.div`
@@ -40,7 +48,9 @@ export default function Home() {
       <NavBar />
       <FlexContainer>
         <StyledAside>
-          <div>SideBar</div>
+          <Container>
+            <ServerButton />
+          </Container>
         </StyledAside>
         <StyledMainContent>
           test
