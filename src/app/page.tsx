@@ -89,6 +89,7 @@ const IconContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   cursor: pointer;
+  color: ${colors["darker text"]}
 `;
 
 const ButtonWrapper = styled.div`
@@ -132,7 +133,7 @@ const HiddenSpan = styled.span`
 
 const StyledInput = styled.input<{ $isEditable: boolean }>`
   background-color: transparent;
-  color: white;
+  color: ${colors["darker text"]};
   padding: 5px;
   font-size: 1.2rem;
   border: ${({ $isEditable }) => ($isEditable ? "1px solid white" : "none")};
@@ -151,6 +152,7 @@ const SaveIconContainer = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.5rem; /* Ajuste la taille ici */
+  color: ${colors["darker text"]};
 `;
 
 
