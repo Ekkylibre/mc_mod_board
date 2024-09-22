@@ -29,6 +29,13 @@ const ButtonContainer = styled.div`
   gap: 10px;
 `;
 
+const BottomContainer = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
 const StyledMainContent = styled.div`
   background-color: ${colors.background};
   padding: 10px;
@@ -56,13 +63,6 @@ const AppContainer = styled.div`
 const FlexContainer = styled.div`
   display: flex;
   flex: 1;
-`;
-
-const BottomText = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
 `;
 
 const ContentContainer = styled.div`
@@ -141,33 +141,82 @@ const SaveIconContainer = styled.div`
 `;
 
 export default function Home() {
-  const [title, setTitle] = useState("Title");
+  const [servers, setServers] = useState([
+    { id: 1, title: "Server 1", yamlContent: "" },
+    { id: 2, title: "Server 2", yamlContent: "" },
+    { id: 3, title: "Server 3", yamlContent: "" },
+    { id: 4, title: "Server 4", yamlContent: "" },
+  ]);
+  
+  // Sélectionne par défaut le premier serveur
+  const [selectedServerId, setSelectedServerId] = useState<number | null>(servers[0]?.id || null);
+  
   const [isEditable, setIsEditable] = useState(false);
   const [inputWidth, setInputWidth] = useState(0);
+  const [tempTitle, setTempTitle] = useState("");
   const [yamlContent, setYamlContent] = useState("");
 
   const spanRef = useRef<HTMLSpanElement>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
-  const handleEditClick = () => {
-    setIsEditable(!isEditable);
-  };
 
   useEffect(() => {
     if (spanRef.current) {
       setInputWidth(spanRef.current.offsetWidth);
     }
-  }, [title]);
+  }, [tempTitle]);
+
+  useEffect(() => {
+    // Met à jour le titre et le contenu YAML lorsque le serveur sélectionné change
+    const server = servers.find(s => s.id === selectedServerId);
+    if (server) {
+      setTempTitle(server.title);
+      setYamlContent(server.yamlContent);
+    }
+  }, [selectedServerId, servers]);
+
+  const handleServerButtonClick = (id: number) => {
+    setSelectedServerId(id);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTempTitle(e.target.value);
+  };
+
+  const handleEditClick = () => {
+    if (isEditable && selectedServerId !== null) {
+      setServers(prevServers =>
+        prevServers.map(server =>
+          server.id === selectedServerId
+            ? { ...server, title: tempTitle }
+            : server
+        )
+      );
+    }
+    setIsEditable(!isEditable);
+  };
 
   const handleEditorChange = (value: string | undefined) => {
-    setYamlContent(value || "");
+    if (selectedServerId !== null) {
+      setYamlContent(value || "");
+      setServers(prevServers =>
+        prevServers.map(server =>
+          server.id === selectedServerId
+            ? { ...server, yamlContent: value || "" }
+            : server
+        )
+      );
+    }
   };
 
   const handleSaveClick = () => {
-    console.log("Sauvegarde effectuée :", title, yamlContent);
+    if (selectedServerId !== null) {
+      console.log("Sauvegarde effectuée :", tempTitle, yamlContent);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleEditClick(); // Valide l'input comme un clic
+    }
   };
 
   return (
@@ -177,15 +226,19 @@ export default function Home() {
         <StyledAside>
           <Container>
             <ButtonContainer>
-              <ServerButton />
-              <ServerButton />
-              <ServerButton />
-              <ServerButton />
+              {servers.map((server) => (
+                <ServerButton
+                  key={server.id}
+                  initial={server.title.charAt(0)}
+                  onClick={() => handleServerButtonClick(server.id)}
+                  selected={server.id === selectedServerId}
+                />
+              ))}
             </ButtonContainer>
-            <BottomText>
+            <BottomContainer>
               <AddServerButton />
               <SettingButton />
-            </BottomText>
+            </BottomContainer>
           </Container>
         </StyledAside>
         <StyledMainContent>
@@ -199,11 +252,12 @@ export default function Home() {
               </StyledButton>
             </ButtonWrapper>
             <div style={{ position: "relative" }}>
-              <HiddenSpan ref={spanRef}>{title}</HiddenSpan>
+              <HiddenSpan ref={spanRef}>{tempTitle}</HiddenSpan>
               <StyledInput
                 type="text"
-                value={title}
+                value={tempTitle}
                 onChange={handleInputChange}
+                onKeyDown={handleKeyDown} // Gestionnaire d'événement pour la touche Entrée
                 disabled={!isEditable}
                 $isEditable={isEditable}
                 style={{ width: `${inputWidth + 10}px` }}
