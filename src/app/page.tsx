@@ -3,6 +3,7 @@ import NavBar from "./components/NavBar";
 import styled from 'styled-components';
 import { colors } from "./theme";
 import ServerButton from "./components/ServerButton";
+import AddServerButton from "./components/AddServerButton";
 
 const StyledAside = styled.aside`
   background-color: ${colors['background raised']};
@@ -14,6 +15,14 @@ const StyledAside = styled.aside`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 const StyledMainContent = styled.div`
@@ -42,6 +51,11 @@ const FlexContainer = styled.div`
   flex: 1;
 `;
 
+const BottomText = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 export default function Home() {
   return (
     <AppContainer>
@@ -49,7 +63,16 @@ export default function Home() {
       <FlexContainer>
         <StyledAside>
           <Container>
-            <ServerButton />
+            <ButtonContainer>
+              <ServerButton />
+              <ServerButton />
+              <ServerButton />
+              <ServerButton />
+            </ButtonContainer>
+            <BottomText>
+              <AddServerButton />
+              
+            </BottomText>
           </Container>
         </StyledAside>
         <StyledMainContent>
