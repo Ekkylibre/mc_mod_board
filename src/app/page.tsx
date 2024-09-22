@@ -88,7 +88,6 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  cursor: pointer;
   color: ${colors["darker text"]}
 `;
 
@@ -153,6 +152,7 @@ const SaveIconContainer = styled.div`
   justify-content: center;
   font-size: 1.5rem; /* Ajuste la taille ici */
   color: ${colors["darker text"]};
+  cursor: pointer;
 `;
 
 
