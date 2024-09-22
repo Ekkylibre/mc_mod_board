@@ -6,7 +6,8 @@ import { colors } from "./theme";
 import ServerButton from "./components/ServerButton";
 import AddServerButton from "./components/AddServerButton";
 import SettingButton from "./components/SettingButton";
-import { FaEdit, FaStop, FaPlay } from "react-icons/fa"; // Import des icônes Stop et Play
+import { FaEdit, FaStop, FaPlay } from "react-icons/fa";
+import { Editor } from "@monaco-editor/react"; // Correction ici
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
@@ -35,6 +36,9 @@ const StyledMainContent = styled.div`
   height: 100%;
   width: auto;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 const StyledArticle = styled.article`
@@ -110,7 +114,7 @@ const HiddenSpan = styled.span`
   position: absolute;
   visibility: hidden;
   white-space: pre;
-  font-size: 1.2rem; /* Doit correspondre au style de l'input */
+  font-size: 1.2rem; 
   padding: 5px;
 `;
 
@@ -123,14 +127,15 @@ const StyledInput = styled.input<{ isEditable: boolean }>`
   outline: none;
   width: auto;
   &:focus {
-    border: 1px solid white; /* Bordure uniforme au focus */
+    border: 1px solid white;
   }
 `;
 
 export default function Home() {
   const [title, setTitle] = useState("Title");
-  const [isEditable, setIsEditable] = useState(false); // Pour gérer l'édition
-  const [inputWidth, setInputWidth] = useState(0); // Gérer la largeur de l'input
+  const [isEditable, setIsEditable] = useState(false);
+  const [inputWidth, setInputWidth] = useState(0);
+  const [yamlContent, setYamlContent] = useState("");
 
   const spanRef = useRef<HTMLSpanElement>(null);
 
@@ -139,14 +144,18 @@ export default function Home() {
   };
 
   const handleEditClick = () => {
-    setIsEditable(!isEditable); // Activer ou désactiver l'édition
+    setIsEditable(!isEditable);
   };
 
   useEffect(() => {
     if (spanRef.current) {
-      setInputWidth(spanRef.current.offsetWidth); // Ajuster la largeur de l'input en fonction du texte
+      setInputWidth(spanRef.current.offsetWidth);
     }
   }, [title]);
+
+  const handleEditorChange = (value: string | undefined) => {
+    setYamlContent(value || "");
+  };
 
   return (
     <AppContainer>
@@ -182,16 +191,27 @@ export default function Home() {
                 type="text"
                 value={title}
                 onChange={handleInputChange}
-                disabled={!isEditable} // Désactiver l'input par défaut
-                isEditable={isEditable} // Modifier la bordure en fonction de l'état d'édition
-                style={{ width: `${inputWidth + 10}px` }} // Ajuster la largeur en fonction du texte
+                disabled={!isEditable}
+                isEditable={isEditable}
+                style={{ width: `${inputWidth + 10}px` }}
               />
             </div>
             <IconContainer onClick={handleEditClick}>
               <FaEdit />
             </IconContainer>
           </ContentContainer>
-          <div>YAML</div>
+          <Editor
+            height="500px"
+            language="yaml"
+            value={yamlContent}
+            theme="vs-dark"
+            onChange={handleEditorChange}
+            options={{
+              selectOnLineNumbers: true,
+              wordWrap: "on",
+              minimap: { enabled: false },
+            }}
+          />
           <div>SaveButton</div>
         </StyledMainContent>
         <StyledArticle>article</StyledArticle>
