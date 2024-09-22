@@ -13,8 +13,13 @@ const StyledButton = styled.button`
   padding: 10px;
 `;
 
-export default function ServerButton() {
+interface ServerButtonProps {
+  initial: string;
+  onClick: () => void;
+}
+
+export default function ServerButton({ initial, onClick }: ServerButtonProps) {
   return (
-    <StyledButton>A</StyledButton>
+    <StyledButton onClick={onClick}>{initial}</StyledButton>
   );
 }
