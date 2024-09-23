@@ -85,12 +85,21 @@ const ContentContainer = styled.div`
   gap: 10px;
 `;
 
+const IconEditContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: ${colors["darker text"]};
+  cursor: pointer;
+`;
+
 const IconContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
   color: ${colors["darker text"]};
 `;
+
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -294,9 +303,9 @@ export default function Home() {
                 style={{ width: `${inputWidth + 10}px` }}
               />
             </div>
-            <IconContainer onClick={handleEditClick}>
+            <IconEditContainer onClick={handleEditClick}>
               <FaEdit />
-            </IconContainer>
+            </IconEditContainer>
           </ContentContainer>
           <Editor
             height="700px"
