@@ -53,19 +53,20 @@ const StyledMainContent = styled.div`
   background-color: ${colors.background};
   padding: 10px;
   color: white;
-  height: 100%;
-  width: auto;
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  overflow: auto;
 `;
 
-const StyledArticle = styled.article`
-  background-color: yellowgreen;
-  flex: 0.25;
-  width: 250px;
-`;
+
+// const StyledArticle = styled.article`
+//   background-color: yellowgreen;
+//   flex: 0.25;
+//   width: 250px;
+// `;
 
 const AppContainer = styled.div`
   display: flex;
@@ -316,7 +317,7 @@ export default function Home() {
             </SaveIconContainer>
           </IconContainer>
         </StyledMainContent>
-        <StyledArticle>article</StyledArticle>
+        {/* <StyledArticle>article</StyledArticle> */}
       </FlexContainer>
     </AppContainer>
   );
