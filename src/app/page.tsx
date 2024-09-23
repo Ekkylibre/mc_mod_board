@@ -90,7 +90,6 @@ const IconContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   color: ${colors["darker text"]};
-  cursor: pointer;
 `;
 
 const ButtonWrapper = styled.div`
