@@ -163,17 +163,17 @@ export default function Home() {
     {
       id: 1, title: "Server 1", yamlContent:
         `services:
-    mc:
-      image: iteg/minecraft-server
-      tty: true
-      stdin_open: true
-      ports:
-        -"25565:25565"
-      environment:
-        EULA: "TRUE"
-      volumes:
-        #attach the relative directory 'data' to the container's /data path
-        -./data:/data`
+  mc:
+    image: iteg/minecraft-server
+    tty: true
+    stdin_open: true
+    ports:
+      -"25565:25565"
+    environment:
+      EULA: "TRUE"
+    volumes:
+      #attach the relative directory 'data' to the container's /data path
+      -./data:/data`
     },
     { id: 2, title: "Server 2", yamlContent: "" },
     { id: 3, title: "Server 3", yamlContent: "" },
