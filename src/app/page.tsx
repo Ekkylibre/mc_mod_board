@@ -28,7 +28,6 @@ const StyledAside = styled.aside`
   }
 `;
 
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,13 +60,6 @@ const StyledMainContent = styled.div`
   overflow: auto;
 `;
 
-
-// const StyledArticle = styled.article`
-//   background-color: yellowgreen;
-//   flex: 0.25;
-//   width: 250px;
-// `;
-
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,7 +91,6 @@ const IconContainer = styled.div`
   align-items: center;
   color: ${colors["darker text"]};
 `;
-
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -165,12 +156,12 @@ const SaveIconContainer = styled.div`
   cursor: pointer;
 `;
 
-
 export default function Home() {
   const [servers, setServers] = useState([
     {
-      id: 1, title: "Server 1", yamlContent:
-        `services:
+      id: 1,
+      title: "Server 1",
+      yamlContent: `services:
   mc:
     image: iteg/minecraft-server
     tty: true
@@ -180,17 +171,14 @@ export default function Home() {
     environment:
       EULA: "TRUE"
     volumes:
-      #attach the relative directory 'data' to the container's /data path
-      -./data:/data`
+      - ./data:/data`
     },
     { id: 2, title: "Server 2", yamlContent: "" },
     { id: 3, title: "Server 3", yamlContent: "" },
     { id: 4, title: "Server 4", yamlContent: "" },
   ]);
 
-  // Sélectionne par défaut le premier serveur
   const [selectedServerId, setSelectedServerId] = useState<number | null>(servers[0]?.id || null);
-
   const [isEditable, setIsEditable] = useState(false);
   const [inputWidth, setInputWidth] = useState(0);
   const [tempTitle, setTempTitle] = useState("");
@@ -205,7 +193,6 @@ export default function Home() {
   }, [tempTitle]);
 
   useEffect(() => {
-    // Met à jour le titre et le contenu YAML lorsque le serveur sélectionné change
     const server = servers.find(s => s.id === selectedServerId);
     if (server) {
       setTempTitle(server.title);
@@ -255,8 +242,17 @@ export default function Home() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleEditClick(); // Valide l'input comme un clic
+      handleEditClick();
     }
+  };
+
+  const handleAddServer = () => {
+    const newServer = {
+      id: servers.length + 1,
+      title: `Server ${servers.length + 1}`,
+      yamlContent: ""
+    };
+    setServers([...servers, newServer]);
   };
 
   return (
@@ -276,7 +272,7 @@ export default function Home() {
               ))}
             </ButtonContainer>
             <BottomContainer>
-              <AddServerButton />
+              <AddServerButton onClick={handleAddServer} />
               <SettingButton />
             </BottomContainer>
           </Container>
@@ -297,7 +293,7 @@ export default function Home() {
                 type="text"
                 value={tempTitle}
                 onChange={handleInputChange}
-                onKeyDown={handleKeyDown} // Gestionnaire d'événement pour la touche Entrée
+                onKeyDown={handleKeyDown}
                 disabled={!isEditable}
                 $isEditable={isEditable}
                 style={{ width: `${inputWidth + 10}px` }}
@@ -319,13 +315,12 @@ export default function Home() {
               minimap: { enabled: false },
             }}
           />
-          <IconContainer>
-            <SaveIconContainer onClick={handleSaveClick}>
+          <IconContainer onClick={handleSaveClick}>
+            <SaveIconContainer>
               <FaSave />
             </SaveIconContainer>
           </IconContainer>
         </StyledMainContent>
-        {/* <StyledArticle>article</StyledArticle> */}
       </FlexContainer>
     </AppContainer>
   );

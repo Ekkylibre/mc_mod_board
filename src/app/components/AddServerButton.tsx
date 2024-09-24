@@ -1,9 +1,14 @@
 import styled from 'styled-components';
 import { colors } from '../theme';
 
+// Définir le type pour les props
+type AddServerButtonProps = {
+  onClick: () => void; // Fonction sans arguments, qui ne retourne rien
+};
+
 const StyledButton = styled.button`
   background-color: ${colors['lighter brand color']};
-  color:  ${colors.background};
+  color: ${colors.background};
   border: none;
   border-radius: 10px;
   width: auto;
@@ -13,8 +18,10 @@ const StyledButton = styled.button`
   padding: 10px;
 `;
 
-export default function AddServerButton() {
+const AddServerButton: React.FC<AddServerButtonProps> = ({ onClick }) => {
   return (
-    <StyledButton>+</StyledButton>
-  )
+    <StyledButton onClick={onClick}>+</StyledButton>
+  );
 }
+
+export default AddServerButton;
