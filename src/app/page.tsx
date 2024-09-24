@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import NavBar from "./components/NavBar";
 import styled from "styled-components";
 import { colors } from "./theme";
@@ -19,12 +19,12 @@ const StyledAside = styled.aside`
   &::before {
     content: "";
     position: absolute;
-    top: 0; // Positionnez-le en haut
-    left: 50%; // Centrez le trait
-    width: 50%; // Ajustez la largeur du trait
-    height: 1px; // Hauteur du trait
-    background-color: ${colors["darker text"]}; // Couleur du trait
-    transform: translateX(-50%); // Centrez le trait horizontalement
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 1px;
+    background-color: ${colors["darker text"]};
+    transform: translateX(-50%);
   }
 `;
 
@@ -151,7 +151,7 @@ const SaveIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem; /* Ajuste la taille ici */
+  font-size: 1.5rem; 
   color: ${colors["darker text"]};
   cursor: pointer;
 `;
@@ -234,11 +234,11 @@ export default function Home() {
     }
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = useCallback(() => {
     if (selectedServerId !== null) {
       console.log("Sauvegarde effectuée :", tempTitle, yamlContent);
     }
-  };
+  }, [selectedServerId, tempTitle, yamlContent]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -254,6 +254,20 @@ export default function Home() {
     };
     setServers([...servers, newServer]);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault(); // Empêche le comportement par défaut
+        handleSaveClick(); // Appelle la fonction de sauvegarde
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSaveClick]);
 
   return (
     <AppContainer>
@@ -309,14 +323,9 @@ export default function Home() {
             value={yamlContent}
             theme="vs-dark"
             onChange={handleEditorChange}
-            options={{
-              selectOnLineNumbers: true,
-              wordWrap: "on",
-              minimap: { enabled: false },
-            }}
           />
-          <IconContainer onClick={handleSaveClick}>
-            <SaveIconContainer>
+          <IconContainer>
+            <SaveIconContainer onClick={handleSaveClick}>
               <FaSave />
             </SaveIconContainer>
           </IconContainer>
