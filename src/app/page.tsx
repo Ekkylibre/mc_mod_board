@@ -157,6 +157,11 @@ const SaveIconContainer = styled.div`
   cursor: pointer;
 `;
 
+const RelativeContainer = styled.div`
+  position: relative;
+`;
+
+
 export default function Home() {
   const [servers, setServers] = useState([
     { id: 1, title: "Server 1", yamlContent: "" },
@@ -219,10 +224,6 @@ export default function Home() {
     setSelectedServerId(id);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempTitle(e.target.value);
-  };
-
   const handleEditClick = () => {
     if (selectedServerId !== null) {
       setIsEditable(prev => !prev);
@@ -235,7 +236,6 @@ export default function Home() {
     }
   };
 
-
   const handleBlur = () => {
     if (isEditable && selectedServerId !== null) {
       setServers(prevServers =>
@@ -247,6 +247,10 @@ export default function Home() {
       );
       setIsEditable(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTempTitle(e.target.value);
   };
 
   const handleEditorChange = (value: string | undefined) => {
@@ -292,7 +296,7 @@ export default function Home() {
       const newServer = {
         id: servers.length + 1,
         title: `Server ${servers.length + 1}`,
-        yamlContent: yaml.dump(parsedYaml) // Utilisation du contenu YAML par défaut
+        yamlContent: yaml.dump(parsedYaml)
       };
 
       setServers([...servers, newServer]);
@@ -300,21 +304,6 @@ export default function Home() {
       console.error("Erreur lors du chargement du fichier YAML par défaut", error);
     }
   };
-
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        handleSaveClick();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleSaveClick]);
 
   const handleClose = (id: number) => {
     setServers(prevServers => prevServers.filter(server => server.id !== id));
@@ -354,7 +343,7 @@ export default function Home() {
                 <FaPlay />
               </StyledButton>
             </ButtonWrapper>
-            <div style={{ position: "relative" }}>
+            <RelativeContainer>
               <HiddenSpan ref={spanRef}>{tempTitle}</HiddenSpan>
               <StyledInput
                 ref={inputRef}
@@ -368,7 +357,7 @@ export default function Home() {
                 style={{ width: `${inputWidth + 5}px` }}
                 onClick={handleEditClick}
               />
-            </div>
+            </RelativeContainer>
             <IconEditContainer onClick={handleEditClick}>
               <FaEdit />
             </IconEditContainer>
@@ -376,7 +365,7 @@ export default function Home() {
           <Editor
             height="700px"
             language="yaml"
-            value={yamlContent} // Utilisation de yamlContent ici
+            value={yamlContent}
             theme="vs-dark"
             onChange={handleEditorChange}
           />
