@@ -174,29 +174,33 @@ export default function Home() {
   const spanRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const loadYaml = async () => {
-      try {
-        const response = await axios.get('/default.yaml');
-        const parsedYaml = yaml.load(response.data);
+  const [isYamlLoaded, setIsYamlLoaded] = useState(false);
 
-        // Mettez à jour le contenu YAML pour chaque serveur une seule fois
-        const updatedServers = servers.map((server) => ({
-          ...server,
-          yamlContent: yaml.dump(parsedYaml),
-        }));
+useEffect(() => {
+  const loadYaml = async () => {
+    try {
+      const response = await axios.get('/default.yaml');
+      const parsedYaml = yaml.load(response.data);
 
-        setServers(updatedServers);
-      } catch (error) {
-        console.error("Erreur lors du chargement du fichier YAML", error);
-      }
-    };
+      // Mettez à jour le contenu YAML pour chaque serveur une seule fois
+      const updatedServers = servers.map((server) => ({
+        ...server,
+        yamlContent: yaml.dump(parsedYaml),
+      }));
 
-    // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
-    if (servers.some((server) => server.yamlContent === "")) {
-      loadYaml();
+      setServers(updatedServers);
+      setIsYamlLoaded(true); // Marquer le YAML comme chargé
+    } catch (error) {
+      console.error("Erreur lors du chargement du fichier YAML", error);
     }
-  }, []);
+  };
+
+  // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
+  if (!isYamlLoaded && servers.some((server) => server.yamlContent === "")) {
+    loadYaml();
+  }
+}, [servers, isYamlLoaded]); // Ajouter 'isYamlLoaded' ici
+
 
   useEffect(() => {
     if (spanRef.current) {
