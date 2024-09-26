@@ -284,14 +284,23 @@ export default function Home() {
     }
   };
 
-  const handleAddServer = () => {
-    const newServer = {
-      id: servers.length + 1,
-      title: `Server ${servers.length + 1}`,
-      yamlContent: ""
-    };
-    setServers([...servers, newServer]);
+  const handleAddServer = async () => {
+    try {
+      const response = await axios.get('/default.yaml');
+      const parsedYaml = yaml.load(response.data);
+      
+      const newServer = {
+        id: servers.length + 1,
+        title: `Server ${servers.length + 1}`,
+        yamlContent: yaml.dump(parsedYaml) // Utilisation du contenu YAML par défaut
+      };
+  
+      setServers([...servers, newServer]);
+    } catch (error) {
+      console.error("Erreur lors du chargement du fichier YAML par défaut", error);
+    }
   };
+  
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
