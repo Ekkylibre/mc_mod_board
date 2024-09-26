@@ -234,7 +234,7 @@ export default function Home() {
       }
     }
   };
-  
+
 
   const handleBlur = () => {
     if (isEditable && selectedServerId !== null) {
@@ -288,19 +288,19 @@ export default function Home() {
     try {
       const response = await axios.get('/default.yaml');
       const parsedYaml = yaml.load(response.data);
-      
+
       const newServer = {
         id: servers.length + 1,
         title: `Server ${servers.length + 1}`,
         yamlContent: yaml.dump(parsedYaml) // Utilisation du contenu YAML par défaut
       };
-  
+
       setServers([...servers, newServer]);
     } catch (error) {
       console.error("Erreur lors du chargement du fichier YAML par défaut", error);
     }
   };
-  
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -316,6 +316,11 @@ export default function Home() {
     };
   }, [handleSaveClick]);
 
+  const handleClose = (id: number) => {
+    setServers(prevServers => prevServers.filter(server => server.id !== id));
+    console.log(`Fermeture du serveur avec l'ID: ${id}`);
+  };
+
   return (
     <AppContainer>
       <NavBar />
@@ -329,6 +334,7 @@ export default function Home() {
                   initial={server.title.charAt(0)}
                   onClick={() => handleServerButtonClick(server.id)}
                   selected={server.id === selectedServerId}
+                  onClose={() => handleClose(server.id)}
                 />
               ))}
             </ButtonContainer>
