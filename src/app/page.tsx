@@ -8,6 +8,8 @@ import AddServerButton from "./components/AddServerButton";
 import SettingButton from "./components/SettingButton";
 import { FaEdit, FaStop, FaPlay, FaSave } from "react-icons/fa";
 import { Editor } from "@monaco-editor/react";
+import yaml from 'js-yaml';
+import axios from 'axios';
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
@@ -158,21 +160,7 @@ const SaveIconContainer = styled.div`
 
 export default function Home() {
   const [servers, setServers] = useState([
-    {
-      id: 1,
-      title: "Server 1",
-      yamlContent: `services:
-  mc:
-    image: iteg/minecraft-server
-    tty: true
-    stdin_open: true
-    ports:
-      -"25565:25565"
-    environment:
-      EULA: "TRUE"
-    volumes:
-      - ./data:/data`
-    },
+    { id: 1, title: "Server 1", yamlContent: "" },
     { id: 2, title: "Server 2", yamlContent: "" },
     { id: 3, title: "Server 3", yamlContent: "" },
     { id: 4, title: "Server 4", yamlContent: "" },
@@ -188,13 +176,37 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    const loadYaml = async () => {
+      try {
+        const response = await axios.get('/default.yaml');
+        const parsedYaml = yaml.load(response.data);
+
+        // Mettez à jour le contenu YAML pour chaque serveur une seule fois
+        const updatedServers = servers.map((server) => ({
+          ...server,
+          yamlContent: yaml.dump(parsedYaml),
+        }));
+
+        setServers(updatedServers);
+      } catch (error) {
+        console.error("Erreur lors du chargement du fichier YAML", error);
+      }
+    };
+
+    // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
+    if (servers.some((server) => server.yamlContent === "")) {
+      loadYaml();
+    }
+  }, []);
+
+  useEffect(() => {
     if (spanRef.current) {
       setInputWidth(spanRef.current.offsetWidth);
     }
   }, [tempTitle]);
 
   useEffect(() => {
-    const server = servers.find(s => s.id === selectedServerId);
+    const server = servers.find((s) => s.id === selectedServerId);
     if (server) {
       setTempTitle(server.title);
       setYamlContent(server.yamlContent);
@@ -221,8 +233,8 @@ export default function Home() {
     }
     console.log('Edit');
   };
-  
-  
+
+
 
   const handleBlur = () => {
     console.log('Input a perdu le focus');
@@ -354,7 +366,7 @@ export default function Home() {
           <Editor
             height="700px"
             language="yaml"
-            value={yamlContent}
+            value={yamlContent} // Utilisation de yamlContent ici
             theme="vs-dark"
             onChange={handleEditorChange}
           />
