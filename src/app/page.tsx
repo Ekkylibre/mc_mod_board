@@ -139,7 +139,7 @@ const StyledInput = styled.input<{ $isEditable: boolean }>`
   font-size: 1.2rem;
   border: ${({ $isEditable }) => ($isEditable ? "1px solid white" : "none")};
   width: auto;
-  cursor: pointer;
+  cursor: ${({ $isEditable }) => ($isEditable ? "auto" : "pointer")};
   &:focus {
     border: 1px solid white;
   }
@@ -176,31 +176,30 @@ export default function Home() {
 
   const [isYamlLoaded, setIsYamlLoaded] = useState(false);
 
-useEffect(() => {
-  const loadYaml = async () => {
-    try {
-      const response = await axios.get('/default.yaml');
-      const parsedYaml = yaml.load(response.data);
+  useEffect(() => {
+    const loadYaml = async () => {
+      try {
+        const response = await axios.get('/default.yaml');
+        const parsedYaml = yaml.load(response.data);
 
-      // Mettez à jour le contenu YAML pour chaque serveur une seule fois
-      const updatedServers = servers.map((server) => ({
-        ...server,
-        yamlContent: yaml.dump(parsedYaml),
-      }));
+        // Mettez à jour le contenu YAML pour chaque serveur une seule fois
+        const updatedServers = servers.map((server) => ({
+          ...server,
+          yamlContent: yaml.dump(parsedYaml),
+        }));
 
-      setServers(updatedServers);
-      setIsYamlLoaded(true); // Marquer le YAML comme chargé
-    } catch (error) {
-      console.error("Erreur lors du chargement du fichier YAML", error);
+        setServers(updatedServers);
+        setIsYamlLoaded(true);
+      } catch (error) {
+        console.error("Erreur lors du chargement du fichier YAML", error);
+      }
+    };
+
+    // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
+    if (!isYamlLoaded && servers.some((server) => server.yamlContent === "")) {
+      loadYaml();
     }
-  };
-
-  // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
-  if (!isYamlLoaded && servers.some((server) => server.yamlContent === "")) {
-    loadYaml();
-  }
-}, [servers, isYamlLoaded]); // Ajouter 'isYamlLoaded' ici
-
+  }, [servers, isYamlLoaded]);
 
   useEffect(() => {
     if (spanRef.current) {
@@ -228,19 +227,16 @@ useEffect(() => {
     if (selectedServerId !== null) {
       setIsEditable(prev => !prev);
       if (!isEditable) {
-        // Utiliser setTimeout pour s'assurer que l'input a été rendu avant de lui donner le focus
-        setTimeout(() => {
+        // Utiliser requestAnimationFrame pour donner le focus à l'input immédiatement après son rendu
+        requestAnimationFrame(() => {
           inputRef.current?.focus();
-        }, 0);
+        });
       }
     }
-    console.log('Edit');
   };
-
-
+  
 
   const handleBlur = () => {
-    console.log('Input a perdu le focus');
     if (isEditable && selectedServerId !== null) {
       setServers(prevServers =>
         prevServers.map(server =>
@@ -249,11 +245,9 @@ useEffect(() => {
             : server
         )
       );
-      console.log('Modifications sauvegardées, désactivation de l\'édition');
       setIsEditable(false);
     }
   };
-
 
   const handleEditorChange = (value: string | undefined) => {
     if (selectedServerId !== null) {
@@ -275,9 +269,8 @@ useEffect(() => {
   }, [selectedServerId, tempTitle, yamlContent]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      // Sauvegarde des modifications
-      if (isEditable && selectedServerId !== null) {
+    if (e.key === "Enter" && isEditable) {
+      if (selectedServerId !== null) {
         setServers(prevServers =>
           prevServers.map(server =>
             server.id === selectedServerId
@@ -285,13 +278,11 @@ useEffect(() => {
               : server
           )
         );
-        // Désactiver l'édition après sauvegarde
         setIsEditable(false);
-        console.log("Modifications sauvegardées via la touche Entrée");
+        inputRef.current?.blur();
       }
     }
   };
-
 
   const handleAddServer = () => {
     const newServer = {
@@ -305,8 +296,8 @@ useEffect(() => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === 's') {
-        e.preventDefault(); // Empêche le comportement par défaut
-        handleSaveClick(); // Appelle la fonction de sauvegarde
+        e.preventDefault();
+        handleSaveClick();
       }
     };
 
@@ -357,9 +348,10 @@ useEffect(() => {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}
-                disabled={!isEditable}
+                disabled={false}
                 $isEditable={isEditable}
-                style={{ width: `${inputWidth + 10}px` }}
+                style={{ width: `${inputWidth + 5}px` }}
+                onClick={handleEditClick}
               />
             </div>
             <IconEditContainer onClick={handleEditClick}>
