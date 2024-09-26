@@ -12,10 +12,6 @@ const slideUp = keyframes`
   }
 `;
 
-interface StyledButtonProps {
-  selected: boolean;
-}
-
 const StyledButton = styled.button<StyledButtonProps>`
   background-color: ${colors['background raised']};
   color: white;
@@ -26,13 +22,13 @@ const StyledButton = styled.button<StyledButtonProps>`
   font-size: 16px;
   cursor: pointer;
   padding: 10px;
-  position: relative; /* Nécessaire pour positionner le "X" */
+  position: relative;
   animation: ${slideUp} 0.5s ease-out;
   outline: ${({ selected }) =>
     selected ? '2px solid #c1bed1' : 'none'};
 
   &:hover .close-button {
-    display: block; /* Affiche le bouton fermer au hover */
+    display: block;
   }
 `;
 
@@ -54,12 +50,16 @@ const CloseButton = styled.span`
   padding: 0;
 `;
 
-interface ServerButtonProps {
+type ServerButtonProps = {
   initial: string;
   onClick: () => void;
   onClose: () => void;
   selected: boolean;
-}
+};
+
+type StyledButtonProps = {
+  selected: boolean;
+};
 
 export default function ServerButton({ initial, onClick, onClose, selected }: ServerButtonProps) {
   return (

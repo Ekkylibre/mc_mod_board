@@ -175,54 +175,10 @@ export default function Home() {
   const [inputWidth, setInputWidth] = useState(0);
   const [tempTitle, setTempTitle] = useState("");
   const [yamlContent, setYamlContent] = useState("");
+  const [isYamlLoaded, setIsYamlLoaded] = useState(false);
 
   const spanRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const [isYamlLoaded, setIsYamlLoaded] = useState(false);
-
-  useEffect(() => {
-    const loadYaml = async () => {
-      try {
-        const response = await axios.get('/default.yaml');
-        const parsedYaml = yaml.load(response.data);
-
-        // Mettez à jour le contenu YAML pour chaque serveur une seule fois
-        const updatedServers = servers.map((server) => ({
-          ...server,
-          yamlContent: yaml.dump(parsedYaml),
-        }));
-
-        setServers(updatedServers);
-        setIsYamlLoaded(true);
-      } catch (error) {
-        console.error("Erreur lors du chargement du fichier YAML", error);
-      }
-    };
-
-    // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
-    if (!isYamlLoaded && servers.some((server) => server.yamlContent === "")) {
-      loadYaml();
-    }
-  }, [servers, isYamlLoaded]);
-
-  useEffect(() => {
-    if (spanRef.current) {
-      setInputWidth(spanRef.current.offsetWidth);
-    }
-  }, [tempTitle]);
-
-  useEffect(() => {
-    const server = servers.find((s) => s.id === selectedServerId);
-    if (server) {
-      setTempTitle(server.title);
-      setYamlContent(server.yamlContent);
-    }
-  }, [selectedServerId, servers]);
-
-  const handleServerButtonClick = (id: number) => {
-    setSelectedServerId(id);
-  };
 
   const handleEditClick = () => {
     if (selectedServerId !== null) {
@@ -309,6 +265,66 @@ export default function Home() {
     setServers(prevServers => prevServers.filter(server => server.id !== id));
     console.log(`Fermeture du serveur avec l'ID: ${id}`);
   };
+
+  useEffect(() => {
+    const loadYaml = async () => {
+      try {
+        const response = await axios.get('/default.yaml');
+        const parsedYaml = yaml.load(response.data);
+
+        // Mettez à jour le contenu YAML pour chaque serveur une seule fois
+        const updatedServers = servers.map((server) => ({
+          ...server,
+          yamlContent: yaml.dump(parsedYaml),
+        }));
+
+        setServers(updatedServers);
+        setIsYamlLoaded(true);
+      } catch (error) {
+        console.error("Erreur lors du chargement du fichier YAML", error);
+      }
+    };
+
+    // Vérifiez si le YAML a déjà été chargé pour éviter les mises à jour infinies
+    if (!isYamlLoaded && servers.some((server) => server.yamlContent === "")) {
+      loadYaml();
+    }
+  }, [servers, isYamlLoaded]);
+
+  useEffect(() => {
+    if (spanRef.current) {
+      setInputWidth(spanRef.current.offsetWidth);
+    }
+  }, [tempTitle]);
+
+  useEffect(() => {
+    const server = servers.find((s) => s.id === selectedServerId);
+    if (server) {
+      setTempTitle(server.title);
+      setYamlContent(server.yamlContent);
+    }
+  }, [selectedServerId, servers]);
+
+  const handleServerButtonClick = (id: number) => {
+    setSelectedServerId(id);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); // Empêche le comportement par défaut
+        handleSaveClick();   // Appelle la fonction de sauvegarde
+      }
+    };
+
+    // Ajoute l'écouteur d'événements
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Nettoyage de l'écouteur d'événements
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleSaveClick]);
 
   return (
     <AppContainer>
