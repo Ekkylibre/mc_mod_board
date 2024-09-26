@@ -185,6 +185,7 @@ export default function Home() {
   const [yamlContent, setYamlContent] = useState("");
 
   const spanRef = useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (spanRef.current) {
@@ -209,6 +210,22 @@ export default function Home() {
   };
 
   const handleEditClick = () => {
+    if (selectedServerId !== null) {
+      setIsEditable(prev => !prev);
+      if (!isEditable) {
+        // Utiliser setTimeout pour s'assurer que l'input a été rendu avant de lui donner le focus
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
+      }
+    }
+    console.log('Edit');
+  };
+  
+  
+
+  const handleBlur = () => {
+    console.log('Input a perdu le focus');
     if (isEditable && selectedServerId !== null) {
       setServers(prevServers =>
         prevServers.map(server =>
@@ -217,9 +234,11 @@ export default function Home() {
             : server
         )
       );
+      console.log('Modifications sauvegardées, désactivation de l\'édition');
+      setIsEditable(false);
     }
-    setIsEditable(!isEditable);
   };
+
 
   const handleEditorChange = (value: string | undefined) => {
     if (selectedServerId !== null) {
@@ -242,9 +261,22 @@ export default function Home() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleEditClick();
+      // Sauvegarde des modifications
+      if (isEditable && selectedServerId !== null) {
+        setServers(prevServers =>
+          prevServers.map(server =>
+            server.id === selectedServerId
+              ? { ...server, title: tempTitle }
+              : server
+          )
+        );
+        // Désactiver l'édition après sauvegarde
+        setIsEditable(false);
+        console.log("Modifications sauvegardées via la touche Entrée");
+      }
     }
   };
+
 
   const handleAddServer = () => {
     const newServer = {
@@ -262,7 +294,7 @@ export default function Home() {
         handleSaveClick(); // Appelle la fonction de sauvegarde
       }
     };
-    
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -304,10 +336,12 @@ export default function Home() {
             <div style={{ position: "relative" }}>
               <HiddenSpan ref={spanRef}>{tempTitle}</HiddenSpan>
               <StyledInput
+                ref={inputRef}
                 type="text"
                 value={tempTitle}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
+                onBlur={handleBlur}
                 disabled={!isEditable}
                 $isEditable={isEditable}
                 style={{ width: `${inputWidth + 10}px` }}
