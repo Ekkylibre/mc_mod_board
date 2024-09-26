@@ -136,11 +136,10 @@ const HiddenSpan = styled.span`
 const StyledInput = styled.input<{ $isEditable: boolean }>`
   background-color: transparent;
   color: ${colors["darker text"]};
-  padding: 5px;
   font-size: 1.2rem;
   border: ${({ $isEditable }) => ($isEditable ? "1px solid white" : "none")};
-  outline: none;
   width: auto;
+  cursor: pointer;
   &:focus {
     border: 1px solid white;
   }
