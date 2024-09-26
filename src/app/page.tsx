@@ -161,6 +161,25 @@ const RelativeContainer = styled.div`
   position: relative;
 `;
 
+const InviteMessageContainer = styled.div`
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: ${colors["background raised"]};
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+`;
 
 export default function Home() {
   const [servers, setServers] = useState([
@@ -246,34 +265,48 @@ export default function Home() {
 
   const handleAddServer = async () => {
     try {
-        const response = await axios.get('/default.yaml');
-        const parsedYaml = yaml.load(response.data);
-
-        // Trouver un titre unique pour le nouveau serveur
-        let newTitle = `Server ${servers.length + 1}`;
-        let index = 1;
-
-        while (servers.some(server => server.title === newTitle)) {
-            index++;
-            newTitle = `Server ${servers.length + index}`;
-        }
-
-        const newServer = {
-            id: Date.now(), // Utilisation d'un timestamp pour garantir l'unicité
-            title: newTitle,
-            yamlContent: yaml.dump(parsedYaml)
-        };
-
-        // Ajouter le nouveau serveur
-        setServers([...servers, newServer]);
+      const response = await axios.get('/default.yaml');
+      const parsedYaml = yaml.load(response.data);
+  
+      // Trouver un titre unique pour le nouveau serveur
+      let newTitle = `Server ${servers.length + 1}`;
+      let index = 1;
+  
+      while (servers.some(server => server.title === newTitle)) {
+        index++;
+        newTitle = `Server ${servers.length + index}`;
+      }
+  
+      const newServer = {
+        id: Date.now(), // Utilisation d'un timestamp pour garantir l'unicité
+        title: newTitle,
+        yamlContent: yaml.dump(parsedYaml),
+      };
+  
+      // Ajouter le nouveau serveur et le sélectionner automatiquement
+      setServers((prevServers) => {
+        const updatedServers = [...prevServers, newServer];
+        setSelectedServerId(newServer.id); // Sélectionner automatiquement le nouveau serveur
+        return updatedServers;
+      });
     } catch (error) {
-        console.error("Erreur lors du chargement du fichier YAML par défaut", error);
+      console.error("Erreur lors du chargement du fichier YAML par défaut", error);
     }
-};
-
+  };
 
   const handleClose = (id: number) => {
-    setServers(prevServers => prevServers.filter(server => server.id !== id));
+    setServers(prevServers => {
+      const updatedServers = prevServers.filter(server => server.id !== id);
+      // Vérifiez si la liste est vide
+      if (updatedServers.length === 0) {
+        setSelectedServerId(null); // Ne sélectionnez aucun serveur
+        return updatedServers; // Retournez la liste vide
+      } else {
+        // Si ce n'était pas le dernier serveur, sélectionnez le premier serveur
+        setSelectedServerId(updatedServers[0].id);
+        return updatedServers;
+      }
+    });
   };
 
   useEffect(() => {
@@ -359,48 +392,58 @@ export default function Home() {
             </BottomContainer>
           </Container>
         </StyledAside>
-        <StyledMainContent>
-          <ContentContainer>
-            <ButtonWrapper>
-              <StyledButton>
-                <FaStop />
-              </StyledButton>
-              <StyledButton>
-                <FaPlay />
-              </StyledButton>
-            </ButtonWrapper>
-            <RelativeContainer>
-              <HiddenSpan ref={spanRef}>{tempTitle}</HiddenSpan>
-              <StyledInput
-                ref={inputRef}
-                type="text"
-                value={tempTitle}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onBlur={handleBlur}
-                disabled={false}
-                $isEditable={isEditable}
-                style={{ width: `${inputWidth + 5}px` }}
-                onClick={handleEditClick}
-              />
-            </RelativeContainer>
-            <IconEditContainer onClick={handleEditClick}>
-              <FaEdit />
-            </IconEditContainer>
-          </ContentContainer>
-          <Editor
-            height="700px"
-            language="yaml"
-            value={yamlContent}
-            theme="vs-dark"
-            onChange={handleEditorChange}
-          />
-          <IconContainer>
-            <SaveIconContainer onClick={handleSaveClick}>
-              <FaSave />
-            </SaveIconContainer>
-          </IconContainer>
-        </StyledMainContent>
+        {servers.length === 0 ? (
+          <StyledMainContent>
+            <InviteMessageContainer>
+              <h2>Pas de serveurs encore !</h2>
+              <p>Créez votre premier serveur pour démarrer laventure.</p>
+              <AddServerButton onClick={handleAddServer} />
+            </InviteMessageContainer>
+          </StyledMainContent>
+        ) : (
+          <StyledMainContent>
+            <ContentContainer>
+              <ButtonWrapper>
+                <StyledButton>
+                  <FaStop />
+                </StyledButton>
+                <StyledButton>
+                  <FaPlay />
+                </StyledButton>
+              </ButtonWrapper>
+              <RelativeContainer>
+                <HiddenSpan ref={spanRef}>{tempTitle}</HiddenSpan>
+                <StyledInput
+                  ref={inputRef}
+                  type="text"
+                  value={tempTitle}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  onBlur={handleBlur}
+                  disabled={false}
+                  $isEditable={isEditable}
+                  style={{ width: `${inputWidth + 5}px` }}
+                  onClick={handleEditClick}
+                />
+              </RelativeContainer>
+              <IconEditContainer onClick={handleEditClick}>
+                <FaEdit />
+              </IconEditContainer>
+            </ContentContainer>
+            <Editor
+              height="700px"
+              language="yaml"
+              value={yamlContent}
+              theme="vs-dark"
+              onChange={handleEditorChange}
+            />
+            <IconContainer>
+              <SaveIconContainer onClick={handleSaveClick}>
+                <FaSave />
+              </SaveIconContainer>
+            </IconContainer>
+          </StyledMainContent>
+        )}
       </FlexContainer>
     </AppContainer>
   );
