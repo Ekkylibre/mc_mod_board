@@ -246,24 +246,34 @@ export default function Home() {
 
   const handleAddServer = async () => {
     try {
-      const response = await axios.get('/default.yaml');
-      const parsedYaml = yaml.load(response.data);
+        const response = await axios.get('/default.yaml');
+        const parsedYaml = yaml.load(response.data);
 
-      const newServer = {
-        id: servers.length + 1,
-        title: `Server ${servers.length + 1}`,
-        yamlContent: yaml.dump(parsedYaml)
-      };
+        // Trouver un titre unique pour le nouveau serveur
+        let newTitle = `Server ${servers.length + 1}`;
+        let index = 1;
 
-      setServers([...servers, newServer]);
+        while (servers.some(server => server.title === newTitle)) {
+            index++;
+            newTitle = `Server ${servers.length + index}`;
+        }
+
+        const newServer = {
+            id: Date.now(), // Utilisation d'un timestamp pour garantir l'unicité
+            title: newTitle,
+            yamlContent: yaml.dump(parsedYaml)
+        };
+
+        // Ajouter le nouveau serveur
+        setServers([...servers, newServer]);
     } catch (error) {
-      console.error("Erreur lors du chargement du fichier YAML par défaut", error);
+        console.error("Erreur lors du chargement du fichier YAML par défaut", error);
     }
-  };
+};
+
 
   const handleClose = (id: number) => {
     setServers(prevServers => prevServers.filter(server => server.id !== id));
-    console.log(`Fermeture du serveur avec l'ID: ${id}`);
   };
 
   useEffect(() => {
