@@ -163,7 +163,6 @@ const RelativeContainer = styled.div`
 
 const InviteMessageContainer = styled.div`
   text-align: center;
-  margin-top: 50px;
   padding: 20px;
   background-color: ${colors["background raised"]};
   border-radius: 8px;
@@ -396,7 +395,7 @@ export default function Home() {
           <StyledMainContent>
             <InviteMessageContainer>
               <h2>Pas de serveurs encore !</h2>
-              <p>Créez votre premier serveur pour démarrer laventure.</p>
+              <p>Créez votre premier serveur pour démarrer l’aventure.</p>
               <AddServerButton onClick={handleAddServer} />
             </InviteMessageContainer>
           </StyledMainContent>
