@@ -6,6 +6,7 @@ const Dot = styled.div<{ $isActive: boolean }>`
   border-radius: 50%;
   background-color: ${(props) => (props.$isActive ? 'green' : 'red')};
   display: inline-block;
+  margin-left: 10px;
 `;
 
 type DotProps = {
