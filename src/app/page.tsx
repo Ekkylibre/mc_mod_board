@@ -6,10 +6,11 @@ import { colors } from "./theme";
 import ServerButton from "./components/ServerButton";
 import AddServerButton from "./components/AddServerButton";
 import SettingButton from "./components/SettingButton";
-import { FaEdit, FaStop, FaPlay, FaSave } from "react-icons/fa";
+import { FaStop, FaPlay, FaSave } from "react-icons/fa";
 import { Editor } from "@monaco-editor/react";
 import yaml from 'js-yaml';
 import axios from 'axios';
+import StatusDot from "./components/StatusDot";
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
@@ -77,14 +78,6 @@ const ContentContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-`;
-
-const IconEditContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  color: ${colors["darker text"]};
-  cursor: pointer;
 `;
 
 const IconContainer = styled.div`
@@ -194,9 +187,24 @@ export default function Home() {
   const [tempTitle, setTempTitle] = useState("");
   const [yamlContent, setYamlContent] = useState("");
   const [isYamlLoaded, setIsYamlLoaded] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const spanRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleStop = () => {
+    // Change l'état à false seulement si isActive est true
+    if (isActive) {
+      setIsActive(false);
+    }
+  };
+
+  const handlePlay = () => {
+    // Change l'état à true seulement si isActive est false
+    if (!isActive) {
+      setIsActive(true);
+    }
+  };
 
   const handleEditClick = () => {
     if (selectedServerId !== null) {
@@ -266,22 +274,22 @@ export default function Home() {
     try {
       const response = await axios.get('/default.yaml');
       const parsedYaml = yaml.load(response.data);
-  
+
       // Trouver un titre unique pour le nouveau serveur
       let newTitle = `Server ${servers.length + 1}`;
       let index = 1;
-  
+
       while (servers.some(server => server.title === newTitle)) {
         index++;
         newTitle = `Server ${servers.length + index}`;
       }
-  
+
       const newServer = {
         id: Date.now(), // Utilisation d'un timestamp pour garantir l'unicité
         title: newTitle,
         yamlContent: yaml.dump(parsedYaml),
       };
-  
+
       // Ajouter le nouveau serveur et le sélectionner automatiquement
       setServers((prevServers) => {
         const updatedServers = [...prevServers, newServer];
@@ -403,10 +411,10 @@ export default function Home() {
           <StyledMainContent>
             <ContentContainer>
               <ButtonWrapper>
-                <StyledButton>
+                <StyledButton onClick={handleStop}>
                   <FaStop />
                 </StyledButton>
-                <StyledButton>
+                <StyledButton onClick={handlePlay}>
                   <FaPlay />
                 </StyledButton>
               </ButtonWrapper>
@@ -424,10 +432,8 @@ export default function Home() {
                   style={{ width: `${inputWidth + 5}px` }}
                   onClick={handleEditClick}
                 />
+                <StatusDot isActive={isActive} />
               </RelativeContainer>
-              <IconEditContainer onClick={handleEditClick}>
-                <FaEdit />
-              </IconEditContainer>
             </ContentContainer>
             <Editor
               height="700px"
