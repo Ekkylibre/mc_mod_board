@@ -142,12 +142,16 @@ const HiddenSpan = styled.span`
 `;
 
 const StyledInput = styled.input<{ $isEditable: boolean }>`
+  overflow: hidden; // Cache le débordement
+  text-overflow: ellipsis; // Affiche des points de suspension si le texte déborde
+  white-space: nowrap; // Évite le retour à la ligne
   background-color: transparent;
   color: ${colors["darker text"]};
   font-size: 1.2rem;
   border: ${({ $isEditable }) => ($isEditable ? "1px solid white" : "none")};
-  width: auto;
+  width: auto; // Permet à l'input de s'ajuster automatiquement
   cursor: ${({ $isEditable }) => ($isEditable ? "auto" : "pointer")};
+
   &:focus {
     border: 1px solid white;
   }
@@ -167,6 +171,7 @@ const SaveIconContainer = styled.div`
 
 const RelativeContainer = styled.div`
   position: relative;
+  white-space: nowrap; // Évite le retour à la ligne
 `;
 
 const InviteMessageContainer = styled.div`
@@ -397,7 +402,7 @@ export default function Home() {
       <FlexContainer>
         <StyledAside>
           <Container>
-          <ScrollableButtonContainer>
+            <ScrollableButtonContainer>
               <ButtonContainer>
                 {servers.map((server) => (
                   <ServerButton
