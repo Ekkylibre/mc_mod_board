@@ -14,8 +14,7 @@ import StatusDot from "./components/StatusDot";
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};
-  padding: 10px;
-  height: 100%;
+  height: calc(100vh - 4rem);
   width: 4rem;
   position: relative;
 
@@ -38,10 +37,25 @@ const Container = styled.div`
   height: 100%;
 `;
 
+const ScrollableButtonContainer = styled.div`
+  flex-grow: 1; /* Prend l'espace disponible */
+  overflow-y: auto; /* Permet le défilement vertical */
+  max-height: calc(100vh - 100px); /* Ajustez en fonction de la hauteur de vos boutons en bas */
+  
+  /* Styles pour cacher les barres de défilement */
+  scrollbar-width: none; /* Pour Firefox */
+  -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Pour Chrome, Safari et Opera */
+  }
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 10px;
 `;
 
 const BottomContainer = styled.div`
@@ -49,6 +63,7 @@ const BottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 10px;
 `;
 
 const StyledMainContent = styled.div`
@@ -382,17 +397,19 @@ export default function Home() {
       <FlexContainer>
         <StyledAside>
           <Container>
-            <ButtonContainer>
-              {servers.map((server) => (
-                <ServerButton
-                  key={server.id}
-                  initial={server.title.charAt(0)}
-                  onClick={() => handleServerButtonClick(server.id)}
-                  selected={server.id === selectedServerId}
-                  onClose={() => handleClose(server.id)}
-                />
-              ))}
-            </ButtonContainer>
+          <ScrollableButtonContainer>
+              <ButtonContainer>
+                {servers.map((server) => (
+                  <ServerButton
+                    key={server.id}
+                    initial={server.title.charAt(0)}
+                    onClick={() => handleServerButtonClick(server.id)}
+                    selected={server.id === selectedServerId}
+                    onClose={() => handleClose(server.id)}
+                  />
+                ))}
+              </ButtonContainer>
+            </ScrollableButtonContainer>
             <BottomContainer>
               <AddServerButton onClick={handleAddServer} />
               <SettingButton />
