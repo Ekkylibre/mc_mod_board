@@ -458,7 +458,7 @@ export default function Home() {
               </RelativeContainer>
             </ContentContainer>
             <Editor
-              height="700px"
+              height="100%"
               language="yaml"
               value={yamlContent}
               theme="vs-dark"
