@@ -1,3 +1,4 @@
+import StyledComponentsRegistry from "./components/StyledComponentsRegistry";
 import GlobalStyle from "./GlobalStyle";
 
 export const metadata = {
@@ -12,8 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <StyledComponentsRegistry>
        <GlobalStyle />
       <body>{children}</body>
+      </StyledComponentsRegistry>
     </html>
   )
 }
