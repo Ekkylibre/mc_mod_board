@@ -1,16 +1,16 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from "react";
-import NavBar from "./components/NavBar";
+import NavBar from "../components/NavBar";
 import styled from "styled-components";
-import { colors } from "./theme";
-import ServerButton from "./components/ServerButton";
-import AddServerButton from "./components/AddServerButton";
-import SettingButton from "./components/SettingButton";
+import { colors } from "../theme";
+import ServerButton from "../components/ServerButton";
+import AddServerButton from "../components/AddServerButton";
+import SettingButton from "../components/SettingButton";
 import { FaStop, FaPlay, FaSave } from "react-icons/fa";
 import { Editor } from "@monaco-editor/react";
 import yaml from 'js-yaml';
 import axios from 'axios';
-import StatusDot from "./components/StatusDot";
+import StatusDot from "../components/StatusDot";
 
 const StyledAside = styled.aside`
   background-color: ${colors["background raised"]};

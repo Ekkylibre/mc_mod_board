@@ -1,5 +1,5 @@
-import StyledComponentsRegistry from "./components/StyledComponentsRegistry";
-import GlobalStyle from "./GlobalStyle";
+import StyledComponentsRegistry from "../components/StyledComponentsRegistry";
+import GlobalStyle from "../theme/GlobalStyle";
 
 export const metadata = {
   title: 'MC Mod Board',
